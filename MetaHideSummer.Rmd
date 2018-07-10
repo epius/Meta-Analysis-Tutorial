@@ -1,0 +1,137 @@
+---
+title: 'Tutorial: Meta-Analysis of Proportion in R'
+author: "Pius S. Ekong"
+date: "July 9, 2018"
+output:
+  word_document: default
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Dataset
+
+Dataset was compiled through a systematic review process
+
+## Install packages required for the analysis
+```{r package}
+# install.packages("tidyverse")
+# install.packages("meta")
+# install.packages("metafor")
+```
+
+## Load library
+```{r library}
+library(tidyverse)
+library(meta)
+library(metafor)
+```
+
+## Read the dataset into R
+```{r data}
+hidedata <- read.csv("Hide_Data.csv", sep="," , header=T, fill=T, na.string=" ")
+head(hidedata,10)
+```
+
+## Data cleaning
+Look at data loaded as "hidedata"
+```{r hide}
+glimpse(hidedata)
+```
+
+Replace the variable names in the dataset
+```{r names}
+names(hidedata) <- c("ID", "StudyName", "StudySetting", "StudyDesign", "CattleType", "SampleType", "AreaSwab", 
+                     "NumSample", "NumPositive", "PropPositive", "Country", "Serotype", "Season")
+glimpse(hidedata)
+str(hidedata)
+```
+
+Let's take a look at the summary of the data
+```{r summ}
+summary(hidedata)
+```
+
+The variable "StudySetting" is suppose to have 2 levels - "Commercial" & "Research Facility"
+```{r conv}
+convert <- which(hidedata$StudySetting =="commercial")
+hidedata$StudySetting[convert] <- "Commercial"
+summary(hidedata$StudySetting)
+```
+
+Let's get rid of the empty factor level 'commercial'
+```{r rid}
+hidedata$StudySetting <- droplevels(hidedata$StudySetting)
+summary(hidedata$StudySetting)
+```
+
+# Data Visualization
+Categorical data
+```{r catdata}
+par(mfrow = c(2,4))
+barplot(Serotype <- table(hidedata$StudySetting))
+barplot(Serotype <- table(hidedata$StudyDesign))
+barplot(Serotype <- table(hidedata$CattleType))
+barplot(Serotype <- table(hidedata$SampleType))
+barplot(Serotype <- table(hidedata$AreaSwab))
+barplot(Serotype <- table(hidedata$Country))
+barplot(Serotype <- table(hidedata$Serotype))
+barplot(Serotype <- table(hidedata$Season))
+```
+
+Numeric data
+```{r numdata}
+par(mfrow = c(1,3))
+hist(hidedata$NumSample)
+hist(hidedata$NumPositive)
+hist(hidedata$PropPositive)
+```
+
+A priori we believe proportion positive differ by CattleType, SampleType and Season.
+Take a subset of data for fed beef sampled at the farm 'Hide-farm'
+```{r priori}
+hidedata_FB_Farm <- subset(hidedata, CattleType=="Fed beef" & SampleType=="Hide-Farm" & Season=="Summer")
+dim(hidedata_FB_Farm)
+```
+
+## Meta-analysis
+
+```{r Meta-analysis}
+# E. coli on hide for fed beef sampled at feedlot 
+hidemeta_FB_Farm_S <- metaprop(NumPositive, NumSample, studlab=StudyName, sm="PFT", data=hidedata_FB_Farm, method="Inverse", method.tau="DL")
+summary(hidemeta_FB_Farm_S)
+```
+
+## Forest plot 
+```{r Forest plot}
+# Summary effect measure obtained from random effect model only
+forest.meta(hidemeta_FB_Farm_S, layout="RevMan5", xlab="Proportion", comb.r=T, comb.f=F, xlim = c(0,1), fontsize=10, digits=3)
+```
+
+## Small Study Effects
+Assessment for small study effects
+```{r Small study}
+funnel.meta(hidemeta_FB_Farm_S)
+metabias(hidemeta_FB_Farm_S)
+```
+
+## Meta-regression: Univariable
+```{r Univariable}
+metareg(hidemeta_FB_Farm_S, ~ StudyDesign)
+metareg(hidemeta_FB_Farm_S, ~ StudySetting)
+metareg(hidemeta_FB_Farm_S, ~ AreaSwab)
+metareg(hidemeta_FB_Farm_S, ~ Country)
+metareg(hidemeta_FB_Farm_S, ~ Serotype)
+```
+
+## Meta-regression: Multivariable
+```{r Multivariable}
+metareg(hidemeta_FB_Farm_S, ~ StudySetting + AreaSwab + Country)
+```
+
+# Reference:
+Details of the systematic review and meta-analysis process and results was published here.
+Ekong P.S., Sanderson M.W., Cernicchiaro N., 2015. Prevalence and concentration of Escherichia coli O157 in different seasons and cattle types processed in North America: A systematic review and meta-analysis of published research. Prev. Vet. Med. 121, 74–85

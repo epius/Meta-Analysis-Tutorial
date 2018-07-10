@@ -1,0 +1,796 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={Tutorial: Meta-Analysis of Proportion in R},
+            pdfauthor={Pius S. Ekong},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+  \title{Tutorial: Meta-Analysis of Proportion in R}
+  \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+  \author{Pius S. Ekong}
+  \preauthor{\centering\large\emph}
+  \postauthor{\par}
+  \predate{\centering\large\emph}
+  \postdate{\par}
+  \date{July 9, 2018}
+
+
+\begin{document}
+\maketitle
+
+\subsection{Dataset}\label{dataset}
+
+Dataset was compiled through a systematic review process
+
+\subsection{Install packages required for the
+analysis}\label{install-packages-required-for-the-analysis}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# install.packages("tidyverse")}
+\CommentTok{# install.packages("meta")}
+\CommentTok{# install.packages("metafor")}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{Load library}\label{load-library}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(tidyverse)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: package 'tidyverse' was built under R version 3.4.4
+\end{verbatim}
+
+\begin{verbatim}
+## -- Attaching packages ----------------------------------------- tidyverse 1.2.1 --
+\end{verbatim}
+
+\begin{verbatim}
+## v ggplot2 2.2.1     v purrr   0.2.5
+## v tibble  1.4.2     v dplyr   0.7.5
+## v tidyr   0.8.1     v stringr 1.3.1
+## v readr   1.1.1     v forcats 0.3.0
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: package 'tibble' was built under R version 3.4.4
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: package 'tidyr' was built under R version 3.4.4
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: package 'readr' was built under R version 3.4.4
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: package 'purrr' was built under R version 3.4.4
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: package 'dplyr' was built under R version 3.4.4
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: package 'stringr' was built under R version 3.4.4
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: package 'forcats' was built under R version 3.4.4
+\end{verbatim}
+
+\begin{verbatim}
+## -- Conflicts -------------------------------------------- tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(meta)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: package 'meta' was built under R version 3.4.4
+\end{verbatim}
+
+\begin{verbatim}
+## Loading 'meta' package (version 4.9-2).
+## Type 'help(meta)' for a brief overview.
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(metafor)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: package 'metafor' was built under R version 3.4.4
+\end{verbatim}
+
+\begin{verbatim}
+## Loading required package: Matrix
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## Attaching package: 'Matrix'
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:tidyr':
+## 
+##     expand
+\end{verbatim}
+
+\begin{verbatim}
+## Loading 'metafor' package (version 2.0-0). For an overview 
+## and introduction to the package please type: help(metafor).
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## Attaching package: 'metafor'
+\end{verbatim}
+
+\begin{verbatim}
+## The following objects are masked from 'package:meta':
+## 
+##     baujat, forest, funnel, funnel.default, labbe, radial,
+##     trimfill
+\end{verbatim}
+
+\subsection{Read the dataset into R}\label{read-the-dataset-into-r}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{hidedata <-}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{"Hide_Data.csv"}\NormalTok{, }\DataTypeTok{sep=}\StringTok{","}\NormalTok{ , }\DataTypeTok{header=}\NormalTok{T, }\DataTypeTok{fill=}\NormalTok{T, }\DataTypeTok{na.string=}\StringTok{" "}\NormalTok{)}
+\KeywordTok{head}\NormalTok{(hidedata,}\DecValTok{10}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    ID         Study Study.setting    Study.design   Cattle Sample.Type
+## 1   1  Dewell 2008a    Commercial Cross sectional Fed beef   Hide-Farm
+## 2   2  Renter 2008a    Commercial Cross sectional Fed beef   Hide-Farm
+## 3   3 Arthur 2007Ca    Commercial Cross sectional Fed beef   Hide-Farm
+## 4   4 Arthur 2007Cb    Commercial Cross sectional Fed beef   Hide-Farm
+## 5   5 Arthur 2007Cc    Commercial Cross sectional Fed beef   Hide-Farm
+## 6   6  Arthur 2008c    Commercial Cross sectional Fed beef   Hide-Farm
+## 7   7  Arthur 2008e    Commercial Cross sectional Fed beef   Hide-Farm
+## 8   8  Arthur 2008b    Commercial Cross sectional Fed beef   Hide-Farm
+## 9   9  Arthur 2008d    commercial Cross sectional Fed beef   Hide-Farm
+## 10 10  Arthur 2008a    commercial Cross sectional Fed beef   Hide-Farm
+##    Area.Swab.cm2. Number.Sample Number.Positive Prevalence Country
+## 1           <1000           785              48 0.06110000     USA
+## 2           <1000          1040              42 0.04038461  Canada
+## 3           >1000            81              23 0.28400000     USA
+## 4           >1000           149             109 0.73150000     USA
+## 5           >1000            56              12 0.21430000     USA
+## 6           >1000            94              73 0.77660000     USA
+## 7           >1000            87              67 0.77010000     USA
+## 8           >1000            97              62 0.63920000     USA
+## 9           >1000            88              67 0.76140000     USA
+## 10          >1000           128              54 0.42190000     USA
+##    Serotype Season
+## 1    O157   Summer
+## 2   O157 H7 Summer
+## 3   O157 H7 Summer
+## 4   O157 H7 Summer
+## 5   O157 H7 Summer
+## 6   O157 H7 Summer
+## 7   O157 H7 Summer
+## 8   O157 H7 Summer
+## 9   O157 H7 Summer
+## 10  O157 H7 Summer
+\end{verbatim}
+
+\subsection{Data cleaning}\label{data-cleaning}
+
+Look at data loaded as ``hidedata''
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{glimpse}\NormalTok{(hidedata)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Observations: 25
+## Variables: 13
+## $ ID              <int> 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,...
+## $ Study           <fct> Dewell 2008a, Renter 2008a, Arthur 2007Ca, Art...
+## $ Study.setting   <fct> Commercial, Commercial, Commercial, Commercial...
+## $ Study.design    <fct> Cross sectional, Cross sectional, Cross sectio...
+## $ Cattle          <fct> Fed beef, Fed beef, Fed beef, Fed beef, Fed be...
+## $ Sample.Type     <fct> Hide-Farm, Hide-Farm, Hide-Farm, Hide-Farm, Hi...
+## $ Area.Swab.cm2.  <fct> <1000, <1000, >1000, >1000, >1000, >1000, >100...
+## $ Number.Sample   <int> 785, 1040, 81, 149, 56, 94, 87, 97, 88, 128, 3...
+## $ Number.Positive <int> 48, 42, 23, 109, 12, 73, 67, 62, 67, 54, 31, 4...
+## $ Prevalence      <dbl> 0.06110000, 0.04038461, 0.28400000, 0.73150000...
+## $ Country         <fct> USA, Canada, USA, USA, USA, USA, USA, USA, USA...
+## $ Serotype        <fct> O157  , O157 H7, O157 H7, O157 H7, O157 H7, O1...
+## $ Season          <fct> Summer, Summer, Summer, Summer, Summer, Summer...
+\end{verbatim}
+
+Replace the variable names in the dataset
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{names}\NormalTok{(hidedata) <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"ID"}\NormalTok{, }\StringTok{"StudyName"}\NormalTok{, }\StringTok{"StudySetting"}\NormalTok{, }\StringTok{"StudyDesign"}\NormalTok{, }\StringTok{"CattleType"}\NormalTok{, }\StringTok{"SampleType"}\NormalTok{, }\StringTok{"AreaSwab"}\NormalTok{, }
+                     \StringTok{"NumSample"}\NormalTok{, }\StringTok{"NumPositive"}\NormalTok{, }\StringTok{"PropPositive"}\NormalTok{, }\StringTok{"Country"}\NormalTok{, }\StringTok{"Serotype"}\NormalTok{, }\StringTok{"Season"}\NormalTok{)}
+\KeywordTok{glimpse}\NormalTok{(hidedata)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Observations: 25
+## Variables: 13
+## $ ID           <int> 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15...
+## $ StudyName    <fct> Dewell 2008a, Renter 2008a, Arthur 2007Ca, Arthur...
+## $ StudySetting <fct> Commercial, Commercial, Commercial, Commercial, C...
+## $ StudyDesign  <fct> Cross sectional, Cross sectional, Cross sectional...
+## $ CattleType   <fct> Fed beef, Fed beef, Fed beef, Fed beef, Fed beef,...
+## $ SampleType   <fct> Hide-Farm, Hide-Farm, Hide-Farm, Hide-Farm, Hide-...
+## $ AreaSwab     <fct> <1000, <1000, >1000, >1000, >1000, >1000, >1000, ...
+## $ NumSample    <int> 785, 1040, 81, 149, 56, 94, 87, 97, 88, 128, 38, ...
+## $ NumPositive  <int> 48, 42, 23, 109, 12, 73, 67, 62, 67, 54, 31, 49, ...
+## $ PropPositive <dbl> 0.06110000, 0.04038461, 0.28400000, 0.73150000, 0...
+## $ Country      <fct> USA, Canada, USA, USA, USA, USA, USA, USA, USA, U...
+## $ Serotype     <fct> O157  , O157 H7, O157 H7, O157 H7, O157 H7, O157 ...
+## $ Season       <fct> Summer, Summer, Summer, Summer, Summer, Summer, S...
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{str}\NormalTok{(hidedata)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 'data.frame':    25 obs. of  13 variables:
+##  $ ID          : int  1 2 3 4 5 6 7 8 9 10 ...
+##  $ StudyName   : Factor w/ 25 levels "Arthur 2007Ca",..: 20 25 1 2 3 6 8 5 7 4 ...
+##  $ StudySetting: Factor w/ 3 levels "commercial","Commercial",..: 2 2 2 2 2 2 2 2 1 1 ...
+##  $ StudyDesign : Factor w/ 2 levels "Cross sectional",..: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ CattleType  : Factor w/ 2 levels "Cull dairy","Fed beef": 2 2 2 2 2 2 2 2 2 2 ...
+##  $ SampleType  : Factor w/ 2 levels "Hide-Farm","Hide-Plant": 1 1 1 1 1 1 1 1 1 1 ...
+##  $ AreaSwab    : Factor w/ 2 levels "<1000",">1000": 1 1 2 2 2 2 2 2 2 2 ...
+##  $ NumSample   : int  785 1040 81 149 56 94 87 97 88 128 ...
+##  $ NumPositive : int  48 42 23 109 12 73 67 62 67 54 ...
+##  $ PropPositive: num  0.0611 0.0404 0.284 0.7315 0.2143 ...
+##  $ Country     : Factor w/ 2 levels "Canada","USA": 2 1 2 2 2 2 2 2 2 2 ...
+##  $ Serotype    : Factor w/ 2 levels "O157  ","O157 H7": 1 2 2 2 2 2 2 2 2 2 ...
+##  $ Season      : Factor w/ 2 levels "Summer","Winter": 1 1 1 1 1 1 1 1 1 1 ...
+\end{verbatim}
+
+Let's take a look at the summary of the data
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{summary}\NormalTok{(hidedata)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##        ID             StudyName             StudySetting
+##  Min.   : 1   Arthur 2007Ca: 1   commercial       :14   
+##  1st Qu.: 7   Arthur 2007Cb: 1   Commercial       : 8   
+##  Median :13   Arthur 2007Cc: 1   Research facility: 3   
+##  Mean   :13   Arthur 2008a : 1                          
+##  3rd Qu.:19   Arthur 2008b : 1                          
+##  Max.   :25   Arthur 2008c : 1                          
+##               (Other)      :19                          
+##           StudyDesign      CattleType      SampleType  AreaSwab 
+##  Cross sectional:24   Cull dairy:10   Hide-Farm :15   <1000: 2  
+##  Field trial    : 1   Fed beef  :15   Hide-Plant:10   >1000:23  
+##                                                                 
+##                                                                 
+##                                                                 
+##                                                                 
+##                                                                 
+##    NumSample       NumPositive      PropPositive        Country  
+##  Min.   :  38.0   Min.   : 10.00   Min.   : 0.04038   Canada: 1  
+##  1st Qu.:  88.0   1st Qu.: 41.00   1st Qu.: 0.42190   USA   :24  
+##  Median : 190.0   Median : 62.00   Median : 0.81580              
+##  Mean   : 245.6   Mean   : 88.44   Mean   :19.03301              
+##  3rd Qu.: 190.0   3rd Qu.: 99.00   3rd Qu.:33.15789              
+##  Max.   :1040.0   Max.   :423.00   Max.   :90.00000              
+##                                                                  
+##     Serotype     Season  
+##  O157   : 1   Summer:20  
+##  O157 H7:24   Winter: 5  
+##                          
+##                          
+##                          
+##                          
+## 
+\end{verbatim}
+
+The variable ``StudySetting'' is suppose to have 2 levels -
+``Commercial'' \& ``Research Facility''
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{convert <-}\StringTok{ }\KeywordTok{which}\NormalTok{(hidedata}\OperatorTok{$}\NormalTok{StudySetting }\OperatorTok{==}\StringTok{"commercial"}\NormalTok{)}
+\NormalTok{hidedata}\OperatorTok{$}\NormalTok{StudySetting[convert] <-}\StringTok{ "Commercial"}
+\KeywordTok{summary}\NormalTok{(hidedata}\OperatorTok{$}\NormalTok{StudySetting)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##        commercial        Commercial Research facility 
+##                 0                22                 3
+\end{verbatim}
+
+Let's get rid of the empty factor level `commercial'
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{hidedata}\OperatorTok{$}\NormalTok{StudySetting <-}\StringTok{ }\KeywordTok{droplevels}\NormalTok{(hidedata}\OperatorTok{$}\NormalTok{StudySetting)}
+\KeywordTok{summary}\NormalTok{(hidedata}\OperatorTok{$}\NormalTok{StudySetting)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##        Commercial Research facility 
+##                22                 3
+\end{verbatim}
+
+\section{Data Visualization}\label{data-visualization}
+
+Categorical data
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{par}\NormalTok{(}\DataTypeTok{mfrow =} \KeywordTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{,}\DecValTok{4}\NormalTok{))}
+\KeywordTok{barplot}\NormalTok{(Serotype <-}\StringTok{ }\KeywordTok{table}\NormalTok{(hidedata}\OperatorTok{$}\NormalTok{StudySetting))}
+\KeywordTok{barplot}\NormalTok{(Serotype <-}\StringTok{ }\KeywordTok{table}\NormalTok{(hidedata}\OperatorTok{$}\NormalTok{StudyDesign))}
+\KeywordTok{barplot}\NormalTok{(Serotype <-}\StringTok{ }\KeywordTok{table}\NormalTok{(hidedata}\OperatorTok{$}\NormalTok{CattleType))}
+\KeywordTok{barplot}\NormalTok{(Serotype <-}\StringTok{ }\KeywordTok{table}\NormalTok{(hidedata}\OperatorTok{$}\NormalTok{SampleType))}
+\KeywordTok{barplot}\NormalTok{(Serotype <-}\StringTok{ }\KeywordTok{table}\NormalTok{(hidedata}\OperatorTok{$}\NormalTok{AreaSwab))}
+\KeywordTok{barplot}\NormalTok{(Serotype <-}\StringTok{ }\KeywordTok{table}\NormalTok{(hidedata}\OperatorTok{$}\NormalTok{Country))}
+\KeywordTok{barplot}\NormalTok{(Serotype <-}\StringTok{ }\KeywordTok{table}\NormalTok{(hidedata}\OperatorTok{$}\NormalTok{Serotype))}
+\KeywordTok{barplot}\NormalTok{(Serotype <-}\StringTok{ }\KeywordTok{table}\NormalTok{(hidedata}\OperatorTok{$}\NormalTok{Season))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{MetaHideSummer_files/figure-latex/catdata-1.pdf}
+
+Numeric data
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{par}\NormalTok{(}\DataTypeTok{mfrow =} \KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{3}\NormalTok{))}
+\KeywordTok{hist}\NormalTok{(hidedata}\OperatorTok{$}\NormalTok{NumSample)}
+\KeywordTok{hist}\NormalTok{(hidedata}\OperatorTok{$}\NormalTok{NumPositive)}
+\KeywordTok{hist}\NormalTok{(hidedata}\OperatorTok{$}\NormalTok{PropPositive)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{MetaHideSummer_files/figure-latex/numdata-1.pdf}
+
+A priori we believe proportion positive differ by CattleType, SampleType
+and Season. Take a subset of data for fed beef sampled at the farm
+`Hide-farm'
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{hidedata_FB_Farm <-}\StringTok{ }\KeywordTok{subset}\NormalTok{(hidedata, CattleType}\OperatorTok{==}\StringTok{"Fed beef"} \OperatorTok{&}\StringTok{ }\NormalTok{SampleType}\OperatorTok{==}\StringTok{"Hide-Farm"} \OperatorTok{&}\StringTok{ }\NormalTok{Season}\OperatorTok{==}\StringTok{"Summer"}\NormalTok{)}
+\KeywordTok{dim}\NormalTok{(hidedata_FB_Farm)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 15 13
+\end{verbatim}
+
+\subsection{Meta-analysis}\label{meta-analysis}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# E. coli on hide for fed beef sampled at feedlot }
+\NormalTok{hidemeta_FB_Farm_S <-}\StringTok{ }\KeywordTok{metaprop}\NormalTok{(NumPositive, NumSample, }\DataTypeTok{studlab=}\NormalTok{StudyName, }\DataTypeTok{sm=}\StringTok{"PFT"}\NormalTok{, }\DataTypeTok{data=}\NormalTok{hidedata_FB_Farm, }\DataTypeTok{method=}\StringTok{"Inverse"}\NormalTok{, }\DataTypeTok{method.tau=}\StringTok{"DL"}\NormalTok{)}
+\KeywordTok{summary}\NormalTok{(hidemeta_FB_Farm_S)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Number of studies combined: k = 15
+## 
+##                      proportion           95%-CI  z p-value
+## Fixed effect model       0.2085 [0.1942; 0.2232] --      --
+## Random effects model     0.5198 [0.3136; 0.7226] --      --
+## 
+## Quantifying heterogeneity:
+## tau^2 = 0.1668; H = 10.98 [10.04; 12.00]; I^2 = 99.2% [99.0%; 99.3%]
+## 
+## Test of heterogeneity:
+##        Q d.f. p-value
+##  1686.83   14       0
+## 
+## Details on meta-analytical method:
+## - Inverse variance method
+## - DerSimonian-Laird estimator for tau^2
+## - Freeman-Tukey double arcsine transformation
+## - Clopper-Pearson confidence interval for individual studies
+\end{verbatim}
+
+\subsection{Forest plot}\label{forest-plot}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Summary effect measure obtained from random effect model only}
+\KeywordTok{forest.meta}\NormalTok{(hidemeta_FB_Farm_S, }\DataTypeTok{layout=}\StringTok{"RevMan5"}\NormalTok{, }\DataTypeTok{xlab=}\StringTok{"Proportion"}\NormalTok{, }\DataTypeTok{comb.r=}\NormalTok{T, }\DataTypeTok{comb.f=}\NormalTok{F, }\DataTypeTok{xlim =} \KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{1}\NormalTok{), }\DataTypeTok{fontsize=}\DecValTok{10}\NormalTok{, }\DataTypeTok{digits=}\DecValTok{3}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{MetaHideSummer_files/figure-latex/Forest plot-1.pdf}
+
+\subsection{Small Study Effects}\label{small-study-effects}
+
+Assessment for small study effects
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{funnel.meta}\NormalTok{(hidemeta_FB_Farm_S)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{MetaHideSummer_files/figure-latex/Small study-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{metabias}\NormalTok{(hidemeta_FB_Farm_S)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Linear regression test of funnel plot asymmetry
+## 
+## data:  hidemeta_FB_Farm_S
+## t = 5.5885, df = 13, p-value = 8.794e-05
+## alternative hypothesis: asymmetry in funnel plot
+## sample estimates:
+##        bias     se.bias       slope 
+## 17.40489745  3.11441116 -0.04128047
+\end{verbatim}
+
+\subsection{Meta-regression:
+Univariable}\label{meta-regression-univariable}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{metareg}\NormalTok{(hidemeta_FB_Farm_S, }\OperatorTok{~}\StringTok{ }\NormalTok{StudyDesign)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Mixed-Effects Model (k = 15; tau^2 estimator: DL)
+## 
+## tau^2 (estimated amount of residual heterogeneity):     0.1876 (SE = 0.1231)
+## tau (square root of estimated tau^2 value):             0.4331
+## I^2 (residual heterogeneity / unaccounted variability): 99.23%
+## H^2 (unaccounted variability / sampling variability):   129.46
+## R^2 (amount of heterogeneity accounted for):            0.00%
+## 
+## Test for Residual Heterogeneity: 
+## QE(df = 13) = 1682.9844, p-val < .0001
+## 
+## Test of Moderators (coefficient(s) 2): 
+## QM(df = 1) = 0.8491, p-val = 0.3568
+## 
+## Model Results:
+## 
+##                         estimate      se     zval    pval    ci.lb   ci.ub
+## intrcpt                   0.8331  0.1166   7.1421  <.0001   0.6044  1.0617
+## StudyDesignField trial   -0.4143  0.4496  -0.9215  0.3568  -1.2956  0.4669
+##                            
+## intrcpt                 ***
+## StudyDesignField trial     
+## 
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{metareg}\NormalTok{(hidemeta_FB_Farm_S, }\OperatorTok{~}\StringTok{ }\NormalTok{StudySetting)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Mixed-Effects Model (k = 15; tau^2 estimator: DL)
+## 
+## tau^2 (estimated amount of residual heterogeneity):     0.1366 (SE = 0.0862)
+## tau (square root of estimated tau^2 value):             0.3696
+## I^2 (residual heterogeneity / unaccounted variability): 99.02%
+## H^2 (unaccounted variability / sampling variability):   101.60
+## R^2 (amount of heterogeneity accounted for):            18.10%
+## 
+## Test for Residual Heterogeneity: 
+## QE(df = 13) = 1320.8590, p-val < .0001
+## 
+## Test of Moderators (coefficient(s) 2): 
+## QM(df = 1) = 1.8546, p-val = 0.1732
+## 
+## Model Results:
+## 
+##                                estimate      se    zval    pval    ci.lb
+## intrcpt                          0.7393  0.1077  6.8665  <.0001   0.5283
+## StudySettingResearch facility    0.3292  0.2418  1.3618  0.1732  -0.1446
+##                                 ci.ub     
+## intrcpt                        0.9503  ***
+## StudySettingResearch facility  0.8031     
+## 
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{metareg}\NormalTok{(hidemeta_FB_Farm_S, }\OperatorTok{~}\StringTok{ }\NormalTok{AreaSwab)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Mixed-Effects Model (k = 15; tau^2 estimator: DL)
+## 
+## tau^2 (estimated amount of residual heterogeneity):     0.0645 (SE = 0.0435)
+## tau (square root of estimated tau^2 value):             0.2539
+## I^2 (residual heterogeneity / unaccounted variability): 97.60%
+## H^2 (unaccounted variability / sampling variability):   41.64
+## R^2 (amount of heterogeneity accounted for):            61.35%
+## 
+## Test for Residual Heterogeneity: 
+## QE(df = 13) = 541.3725, p-val < .0001
+## 
+## Test of Moderators (coefficient(s) 2): 
+## QM(df = 1) = 11.8529, p-val = 0.0006
+## 
+## Model Results:
+## 
+##                estimate      se    zval    pval    ci.lb   ci.ub     
+## intrcpt          0.2272  0.1799  1.2628  0.2067  -0.1255  0.5799     
+## AreaSwab>1000    0.6674  0.1939  3.4428  0.0006   0.2875  1.0474  ***
+## 
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{metareg}\NormalTok{(hidemeta_FB_Farm_S, }\OperatorTok{~}\StringTok{ }\NormalTok{Country)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Mixed-Effects Model (k = 15; tau^2 estimator: DL)
+## 
+## tau^2 (estimated amount of residual heterogeneity):     0.1779 (SE = 0.0979)
+## tau (square root of estimated tau^2 value):             0.4218
+## I^2 (residual heterogeneity / unaccounted variability): 98.93%
+## H^2 (unaccounted variability / sampling variability):   93.43
+## R^2 (amount of heterogeneity accounted for):            0.00%
+## 
+## Test for Residual Heterogeneity: 
+## QE(df = 13) = 1214.5327, p-val < .0001
+## 
+## Test of Moderators (coefficient(s) 2): 
+## QM(df = 1) = 2.1794, p-val = 0.1399
+## 
+## Model Results:
+## 
+##             estimate      se    zval    pval    ci.lb   ci.ub   
+## intrcpt       0.2035  0.4221  0.4821  0.6298  -0.6238  1.0307   
+## CountryUSA    0.6453  0.4371  1.4763  0.1399  -0.2114  1.5020   
+## 
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{metareg}\NormalTok{(hidemeta_FB_Farm_S, }\OperatorTok{~}\StringTok{ }\NormalTok{Serotype)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Mixed-Effects Model (k = 15; tau^2 estimator: DL)
+## 
+## tau^2 (estimated amount of residual heterogeneity):     0.2041 (SE = 0.1193)
+## tau (square root of estimated tau^2 value):             0.4518
+## I^2 (residual heterogeneity / unaccounted variability): 99.12%
+## H^2 (unaccounted variability / sampling variability):   113.07
+## R^2 (amount of heterogeneity accounted for):            0.00%
+## 
+## Test for Residual Heterogeneity: 
+## QE(df = 13) = 1469.8669, p-val < .0001
+## 
+## Test of Moderators (coefficient(s) 2): 
+## QM(df = 1) = 1.6116, p-val = 0.2043
+## 
+## Model Results:
+## 
+##                  estimate      se    zval    pval    ci.lb   ci.ub   
+## intrcpt            0.2510  0.4521  0.5552  0.5787  -0.6351  1.1372   
+## SerotypeO157 H7    0.5944  0.4682  1.2695  0.2043  -0.3233  1.5120   
+## 
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+
+\subsection{Meta-regression:
+Multivariable}\label{meta-regression-multivariable}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{metareg}\NormalTok{(hidemeta_FB_Farm_S, }\OperatorTok{~}\StringTok{ }\NormalTok{StudySetting }\OperatorTok{+}\StringTok{ }\NormalTok{AreaSwab }\OperatorTok{+}\StringTok{ }\NormalTok{Country)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Mixed-Effects Model (k = 15; tau^2 estimator: DL)
+## 
+## tau^2 (estimated amount of residual heterogeneity):     0.1052 (SE = 0.0508)
+## tau (square root of estimated tau^2 value):             0.3244
+## I^2 (residual heterogeneity / unaccounted variability): 97.61%
+## H^2 (unaccounted variability / sampling variability):   41.84
+## R^2 (amount of heterogeneity accounted for):            36.91%
+## 
+## Test for Residual Heterogeneity: 
+## QE(df = 11) = 460.2710, p-val < .0001
+## 
+## Test of Moderators (coefficient(s) 2:4): 
+## QM(df = 3) = 8.3872, p-val = 0.0387
+## 
+## Model Results:
+## 
+##                                estimate      se    zval    pval    ci.lb
+## intrcpt                          0.2035  0.3248  0.6264  0.5310  -0.4331
+## StudySettingResearch facility    0.2253  0.2173  1.0370  0.2997  -0.2005
+## AreaSwab>1000                    0.5925  0.3411  1.7368  0.0824  -0.0761
+## CountryUSA                       0.0476  0.4594  0.1036  0.9175  -0.8528
+##                                 ci.ub   
+## intrcpt                        0.8400   
+## StudySettingResearch facility  0.6512   
+## AreaSwab>1000                  1.2611  .
+## CountryUSA                     0.9480   
+## 
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+
+\section{Reference:}\label{reference}
+
+Details of the systematic review and meta-analysis process and results
+was published here. Ekong P.S., Sanderson M.W., Cernicchiaro N., 2015.
+Prevalence and concentration of Escherichia coli O157 in different
+seasons and cattle types processed in North America: A systematic review
+and meta-analysis of published research. Prev. Vet. Med. 121, 74â``85
+
+
+\end{document}

@@ -1,0 +1,26 @@
+ID,Study,Study setting,Study design,Cattle,Sample Type,Area Swab(cm2),Number Sample,Number Positive,Prevalence,Country,Serotype,Season
+1,Dewell 2008a,Commercial,Cross sectional,Fed beef,Hide-Farm,<1000,785,48,0.0611,USA,O157  ,Summer
+2,Renter 2008a,Commercial,Cross sectional,Fed beef,Hide-Farm,<1000,1040,42,0.040384615,Canada,O157 H7,Summer
+3,Arthur 2007Ca,Commercial,Cross sectional,Fed beef,Hide-Farm,>1000,81,23,0.284,USA,O157 H7,Summer
+4,Arthur 2007Cb,Commercial,Cross sectional,Fed beef,Hide-Farm,>1000,149,109,0.7315,USA,O157 H7,Summer
+5,Arthur 2007Cc,Commercial,Cross sectional,Fed beef,Hide-Farm,>1000,56,12,0.2143,USA,O157 H7,Summer
+6,Arthur 2008c,Commercial,Cross sectional,Fed beef,Hide-Farm,>1000,94,73,0.7766,USA,O157 H7,Summer
+7,Arthur 2008e,Commercial,Cross sectional,Fed beef,Hide-Farm,>1000,87,67,0.7701,USA,O157 H7,Summer
+8,Arthur 2008b,Commercial,Cross sectional,Fed beef,Hide-Farm,>1000,97,62,0.6392,USA,O157 H7,Summer
+9,Arthur 2008d,commercial,Cross sectional,Fed beef,Hide-Farm,>1000,88,67,0.7614,USA,O157 H7,Summer
+10,Arthur 2008a,commercial,Cross sectional,Fed beef,Hide-Farm,>1000,128,54,0.4219,USA,O157 H7,Summer
+11,Arthur 2008f,commercial,Cross sectional,Fed beef,Hide-Farm,>1000,38,31,0.8158,USA,O157 H7,Summer
+12,Kalchayanan 2009a,Research facility,Cross sectional,Fed beef,Hide-Farm,>1000,50,49,0.98,USA,O157 H7,Summer
+13,Kalchayanan 2009b,Research facility,Cross sectional,Fed beef,Hide-Farm,>1000,56,10,0.1786,USA,O157 H7,Summer
+14,Kalchayanan 2009c,Research facility,Cross sectional,Fed beef,Hide-Farm,>1000,100,96,0.96,USA,O157 H7,Summer
+15,Miller 2008,commercial,Field trial,Fed beef,Hide-Farm,>1000,250,41,0.164,USA,O157 H7,Summer
+16,Brichta-Harhay 2008a,commercial,Cross sectional,Cull dairy,Hide-Plant,>1000,190,171,90,USA,O157 H7,Winter
+17,Brichta-Harhay 2008b,commercial,Cross sectional,Cull dairy,Hide-Plant,>1000,190,138,72.63157895,USA,O157 H7,Winter
+18,Brichta-Harhay 2008c,commercial,Cross sectional,Cull dairy,Hide-Plant,>1000,190,60,31.57894737,USA,O157 H7,Winter
+19,Brichta-Harhay 2008d,commercial,Cross sectional,Cull dairy,Hide-Plant,>1000,190,13,6.842105263,USA,O157 H7,Winter
+20,Brichta-Harhay 2008e,commercial,Cross sectional,Cull dairy,Hide-Plant,>1000,190,99,52.10526316,USA,O157 H7,Summer
+21,Brichta-Harhay 2008f,commercial,Cross sectional,Cull dairy,Hide-Plant,>1000,190,127,66.84210526,USA,O157 H7,Summer
+22,Brichta-Harhay 2008g,commercial,Cross sectional,Cull dairy,Hide-Plant,>1000,190,63,33.15789474,USA,O157 H7,Summer
+23,Brichta-Harhay 2008h,commercial,Cross sectional,Cull dairy,Hide-Plant,>1000,190,39,20.52631579,USA,O157 H7,Summer
+24,Brichta-Harhay 2008i,commercial,Cross sectional,Cull dairy,Hide-Plant,>1000,760,423,55.65789474,USA,O157 H7,Summer
+25,Brichta-Harhay 2008j,commercial,Cross sectional,Cull dairy,Hide-Plant,>1000,760,294,38.68421053,USA,O157 H7,Winter
